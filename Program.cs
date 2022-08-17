@@ -70,9 +70,18 @@ namespace csharpi
             if (message.Author.Id == _client.CurrentUser.Id)
                 return;
 
-            if (message.Content == ".hello")
+            if (message.Content.StartsWith("!"))
             {
-                await message.Channel.SendMessageAsync("world!");
+                try
+                {
+                    var urlAddOn = message.Content.Split("!")[1];
+                    await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/card.php?id=" + urlAddOn);
+                }
+                catch (Exception)
+                {
+                    await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                    throw;
+                }
             }  
         }
     }
