@@ -70,11 +70,11 @@ namespace csharpi
             if (message.Author.Id == _client.CurrentUser.Id)
                 return;
 
-            if (message.Content.StartsWith("!"))
+            if (message.Content.StartsWith("!spell"))
             {
                 try
                 {
-                    var urlAddOn = message.Content.Split("!")[1];
+                    var urlAddOn = message.Content.Split("!spell ")[1];
                     await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/card.php?id=" + urlAddOn);
                 }
                 catch (Exception)
@@ -82,7 +82,33 @@ namespace csharpi
                     await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
                     throw;
                 }
-            }  
+            }
+            else if (message.Content.StartsWith("!spec"))
+            {
+                try
+                {
+                    var urlAddOn = message.Content.Split("!spec ")[1];
+                    await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/spec.php?id=" + urlAddOn);
+                }
+                catch (Exception)
+                {
+                    await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                    throw;
+                }
+            }
+            else if (message.Content.StartsWith("!artifact"))
+            {
+                try
+                {
+                    var urlAddOn = message.Content.Split("!artifact ")[1];
+                    await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/artifact.php?id=" + urlAddOn);
+                }
+                catch (Exception)
+                {
+                    await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                    throw;
+                }
+            }
         }
     }
 }
