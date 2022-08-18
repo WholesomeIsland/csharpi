@@ -6,13 +6,19 @@ using Discord.WebSocket;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
+using System.Net;
+using System.IO;
+using System.Text;
+using AngleSharp;
+using AngleSharp.Html.Parser;
+using System.Net.Http;
 
 namespace csharpi
 {
     class Program
     {
         private readonly DiscordSocketClient _client;
-        private readonly IConfiguration _config;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _config;
 
         public static Task Main(string[] args) => new Program().MainAsync();
 
@@ -75,8 +81,27 @@ namespace csharpi
                 try
                 {
                     var urlAddOn = message.Content.Split("!spell ")[1];
-                    await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/card.php?id=" + urlAddOn);
+                    string urlAddress = "https://becomemagi.morallygray.net/card.php?id=" + urlAddOn;
+                    var client = new HttpClient();
+                     var parser = new HtmlParser();
+                    using var doc = parser.ParseDocument(await client.GetStringAsync(new Uri(urlAddress)));
+                    string imgUrl1 = doc.Images[3].Source;
+                    foreach (var item in doc.Images)
+                    {
+                        Console.WriteLine(item.Source);
+                    }
+
+                    if (client.Send(new HttpRequestMessage(HttpMethod.Get, imgUrl1)).StatusCode == HttpStatusCode.NotFound)
+                    {
+                        await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                        return;
+                    }
+                    else
+                    {
+                        await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/card.php?id=" + urlAddOn);
+                    }
                 }
+                
                 catch (Exception)
                 {
                     await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
@@ -88,7 +113,25 @@ namespace csharpi
                 try
                 {
                     var urlAddOn = message.Content.Split("!spec ")[1];
-                    await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/spec.php?id=" + urlAddOn);
+                    string urlAddress = "https://becomemagi.morallygray.net/spec.php?id=" + urlAddOn;
+                    var client = new HttpClient();
+                    var parser = new HtmlParser();
+                    using var doc = parser.ParseDocument(await client.GetStringAsync(new Uri(urlAddress)));
+                    string imgUrl1 = doc.Images[3].Source;
+                    foreach (var item in doc.Images)
+                    {
+                        Console.WriteLine(item.Source);
+                    }
+                    if (client.Send(new HttpRequestMessage(HttpMethod.Get, imgUrl1)).StatusCode.Equals(HttpStatusCode.NotFound))
+                    {
+                        await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                        return;
+                    }
+                    else
+                    {
+
+                        await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/spec.php?id=" + urlAddOn);
+                    }
                 }
                 catch (Exception)
                 {
@@ -101,7 +144,25 @@ namespace csharpi
                 try
                 {
                     var urlAddOn = message.Content.Split("!artifact ")[1];
-                    await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/artifact.php?id=" + urlAddOn);
+                    string urlAddress = "https://becomemagi.morallygray.net/artifact.php?id=" + urlAddOn;
+                    var client = new HttpClient();
+                    var parser = new HtmlParser();
+                    using var doc = parser.ParseDocument(await client.GetStringAsync(new Uri(urlAddress)));
+                    string imgUrl1 = doc.Images[2].Source;
+                    foreach (var item in doc.Images)
+                    {
+                        Console.WriteLine(item.Source);
+                    }
+                    if (client.Send(new HttpRequestMessage(HttpMethod.Get, imgUrl1)).StatusCode.Equals(HttpStatusCode.NotFound))
+                    {
+                        await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine(imgUrl1);
+                        await message.Channel.SendMessageAsync("https://becomemagi.morallygray.net/artifact.php?id=" + urlAddOn);
+                    }
                 }
                 catch (Exception)
                 {
