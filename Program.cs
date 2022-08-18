@@ -12,11 +12,13 @@ using System.Text;
 using AngleSharp;
 using AngleSharp.Html.Parser;
 using System.Net.Http;
+using System.Linq;
 
 namespace csharpi
 {
     class Program
     {
+        string error = "Error: Card Not Found. check your spelling and try again";
         private readonly DiscordSocketClient _client;
         private readonly Microsoft.Extensions.Configuration.IConfiguration _config;
 
@@ -85,7 +87,7 @@ namespace csharpi
                     var client = new HttpClient();
                      var parser = new HtmlParser();
                     using var doc = parser.ParseDocument(await client.GetStringAsync(new Uri(urlAddress)));
-                    string imgUrl1 = doc.Images[3].Source;
+                    string imgUrl1 = doc.QuerySelectorAll("img.front").Select(el => el.GetAttribute("src")).ToArray()[0];
                     foreach (var item in doc.Images)
                     {
                         Console.WriteLine(item.Source);
@@ -93,7 +95,7 @@ namespace csharpi
 
                     if (client.Send(new HttpRequestMessage(HttpMethod.Get, imgUrl1)).StatusCode == HttpStatusCode.NotFound)
                     {
-                        await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                        await message.Channel.SendMessageAsync(error);
                         return;
                     }
                     else
@@ -104,7 +106,7 @@ namespace csharpi
                 
                 catch (Exception)
                 {
-                    await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                    await message.Channel.SendMessageAsync(error);
                     throw;
                 }
             }
@@ -117,14 +119,10 @@ namespace csharpi
                     var client = new HttpClient();
                     var parser = new HtmlParser();
                     using var doc = parser.ParseDocument(await client.GetStringAsync(new Uri(urlAddress)));
-                    string imgUrl1 = doc.Images[3].Source;
-                    foreach (var item in doc.Images)
-                    {
-                        Console.WriteLine(item.Source);
-                    }
+                    string imgUrl1 = doc.QuerySelectorAll("img.front").Select(el => el.GetAttribute("src")).ToArray()[0];
                     if (client.Send(new HttpRequestMessage(HttpMethod.Get, imgUrl1)).StatusCode.Equals(HttpStatusCode.NotFound))
                     {
-                        await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                        await message.Channel.SendMessageAsync(error);
                         return;
                     }
                     else
@@ -135,7 +133,7 @@ namespace csharpi
                 }
                 catch (Exception)
                 {
-                    await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                    await message.Channel.SendMessageAsync(error);
                     throw;
                 }
             }
@@ -148,14 +146,14 @@ namespace csharpi
                     var client = new HttpClient();
                     var parser = new HtmlParser();
                     using var doc = parser.ParseDocument(await client.GetStringAsync(new Uri(urlAddress)));
-                    string imgUrl1 = doc.Images[2].Source;
+                    string imgUrl1 = doc.QuerySelectorAll("img.front").Select(el => el.GetAttribute("src")).ToArray()[0];
                     foreach (var item in doc.Images)
                     {
                         Console.WriteLine(item.Source);
                     }
                     if (client.Send(new HttpRequestMessage(HttpMethod.Get, imgUrl1)).StatusCode.Equals(HttpStatusCode.NotFound))
                     {
-                        await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                        await message.Channel.SendMessageAsync(error);
                         return;
                     }
                     else
@@ -166,7 +164,7 @@ namespace csharpi
                 }
                 catch (Exception)
                 {
-                    await message.Channel.SendMessageAsync("Uh Oh! Something went wrong");
+                    await message.Channel.SendMessageAsync(error);
                     throw;
                 }
             }
